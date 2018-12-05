@@ -6,6 +6,7 @@ import pydub
 from pydub import AudioSegment
 import os
 import yt_downloader as ytd
+from threading import Thread
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -17,8 +18,9 @@ class Application(tk.Frame):
 
     def create_widgets(self):
 
+        self.status_label_text = tk.StringVar(value="Hello")
         self.status_label = tk.Label(self,
-            text='DONE!')
+            textvariable=self.status_label_text)
         self.status_label.pack(side='bottom')
 
         self.progress_bar = ttk.Progressbar(self,
@@ -51,38 +53,43 @@ class Application(tk.Frame):
 
     def download_mp4(self):
         try:
-            self.status_label['text'] = "DOWNLOADING..."
-            ytd.download_mp4(self.url_entry.get(), self.update_progress_bar_download())
+            self.status_label_text.set("DOWNLOADING...")
+            #ytd.download_mp4(self.url_entry.get(), self.update_progress_bar_download())
+            Thread(target = ytd.download_mp4, args = (self.url_entry.get(), self.update_progress_bar_download())).start()
         except Exception as e:
-            self.status_label['text'] = "ERROR!"
+            self.status_label_text.set("ERROR!")
             print(e)
             messagebox.showerror("Error", "Something went wrong!")
         else:
-            self.status_label['text'] = "DONE!"
+            self.status_label_text.set("DONE!")
             messagebox.showinfo("Message", "Complete!")
 
     def download_mp3(self):
         try:
-            self.status_label['text'] = "DOWNLOADING..."
-            ytd.download_mp3(self.url_entry.get(), 
-                self.update_progress_bar_download(),
-                self.update_status_wrapper("CONVERTING..."),
-                self.update_progress_var_convert())
+            self.status_label_text.set("DOWNLOADING...")
+            # ytd.download_mp3(self.url_entry.get(), 
+            #     self.update_progress_bar_download(),
+            #     self.update_status_wrapper("CONVERTING..."),
+            #     self.update_progress_var_convert())
+
+            Thread(target = ytd.download_mp3, args = (
+                self.url_entry.get(), 
+                self.update_progress_bar_download(), 
+                self.update_status_wrapper("CONVERTING..."), 
+                self.update_progress_var_convert())).start()
         except Exception as e:
-            self.status_label['text'] = "ERROR!"
+            self.status_label_text.set("ERROR!")
             print(e)
             messagebox.showerror("Error", "Something went wrong!")
         else:
-            self.status_label['text'] = "DONE!"
+            self.status_label_text.set("DONE!")
             messagebox.showinfo("Message", "Complete!")
 
     def update_status_wrapper(self, new):
         def wrapper():
-            self.status_label["text"] = new
-            root.update()
+            self.status_label_text.set(new)
 
         return wrapper
-
 
     def update_progress_bar_download(self):
         def callback(stream, chunk, file_handle, bytes_remaining):
