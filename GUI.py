@@ -14,97 +14,62 @@ class Application(tk.Frame):
         master.title("YouTube Downloader")
         self.master = master
         self.pack()
-        self.create_widgets()
+        self.create_frames()
 
-    def create_widgets(self):
+    def create_frames(self):
+        self.title_frame = tk.Frame(self, bd=10)
+        self.title_frame.pack()
+        self.fill_title_frame()
 
-        self.status_label_text = tk.StringVar(value="Hello")
-        self.status_label = tk.Label(self,
-            textvariable=self.status_label_text)
-        self.status_label.pack(side='bottom')
+        self.control_frame = tk.Frame(self, bd=10)
+        self.control_frame.pack()
+        self.fill_control_frame()
 
-        self.progress_bar = ttk.Progressbar(self,
-            orient='horizontal',
-            length='200',
-            mode='determinate')
-        self.progress_bar.pack(side="bottom")
+        self.download_frame = tk.Frame(self, bg='white', bd=10, height=200)
+        self.download_frame.pack(pady=10, padx=100, fill='x', expand=True)
+        self.fill_download_frame()
 
-        self.mp4_button = tk.Button(self, 
-            text='MP4', 
-            command=self.download_mp4,
-            height=2,
-            width=10)
-        self.mp4_button.pack(side="bottom")
+    def fill_title_frame(self):
+        self.title_label = tk.Label(self.title_frame, text='YouTube Downloader', font=("Times", 15, "bold"))
+        self.title_label.pack()
 
-        self.mp3_button = tk.Button(self, 
-            text='MP3', 
-            command=self.download_mp3,
-            height=2,
-            width=10)
-        self.mp3_button.pack(side="bottom")
+    def fill_control_frame(self):
+        url_frame = tk.Frame(self.control_frame, bd=5)
+        url_frame.pack()
 
-        self.url_label = tk.Label(self, 
-            text = "URL: ")
-        self.url_label.pack(side="left")
+        self.url_label = tk.Label(url_frame, text='URL: ')
+        self.url_label.pack(side='left')
 
-        self.url_entry = tk.Entry(self,
-            width=100)
-        self.url_entry.pack(side="top")
+        self.url_entry = tk.Entry(url_frame, width=100)
+        self.url_entry.pack(side='left')
 
-    def download_mp4(self):
-        try:
-            self.status_label_text.set("DOWNLOADING...")
-            #ytd.download_mp4(self.url_entry.get(), self.update_progress_bar_download())
-            Thread(target = ytd.download_mp4, args = (self.url_entry.get(), self.update_progress_bar_download())).start()
-        except Exception as e:
-            self.status_label_text.set("ERROR!")
-            print(e)
-            messagebox.showerror("Error", "Something went wrong!")
-        else:
-            self.status_label_text.set("DONE!")
-            messagebox.showinfo("Message", "Complete!")
+        button_frame = tk.Frame(self.control_frame, bd=5)
+        button_frame.pack()
 
-    def download_mp3(self):
-        try:
-            self.status_label_text.set("DOWNLOADING...")
-            # ytd.download_mp3(self.url_entry.get(), 
-            #     self.update_progress_bar_download(),
-            #     self.update_status_wrapper("CONVERTING..."),
-            #     self.update_progress_var_convert())
+        self.mp4_button = tk.Button(button_frame, text='MP4', width=10, height=2)
+        self.mp4_button.pack(side='left', padx=5)
 
-            Thread(target = ytd.download_mp3, args = (
-                self.url_entry.get(), 
-                self.update_progress_bar_download(), 
-                self.update_status_wrapper("CONVERTING..."), 
-                self.update_progress_var_convert())).start()
-        except Exception as e:
-            self.status_label_text.set("ERROR!")
-            print(e)
-            messagebox.showerror("Error", "Something went wrong!")
-        else:
-            self.status_label_text.set("DONE!")
-            messagebox.showinfo("Message", "Complete!")
+        self.mp3_button = tk.Button(button_frame, text='MP3', width=10, height=2)
+        self.mp3_button.pack(side='left', padx=5)
 
-    def update_status_wrapper(self, new):
-        def wrapper():
-            self.status_label_text.set(new)
+    def fill_download_frame(self):
+        pass
 
-        return wrapper
+    def add_download(self, url):
+        frame = tk.Frame(self.download_frame)
+        frame.pack()
 
-    def update_progress_bar_download(self):
-        def callback(stream, chunk, file_handle, bytes_remaining):
-            self.progress_bar["maximum"] = stream.filesize
-            self.progress_bar["value"] = stream.filesize - bytes_remaining
-            root.update_idletasks()
-        return callback
+        title = tk.Label(frame width=)
+        title.pack()
 
-    def update_progress_var_convert(self):
-        def callback(i, size):
-            self.progress_bar["maximum"] = size
-            self.progress_bar["value"] = i
-            root.update_idletasks()
-        return callback
 
-root = tk.Tk()
-app = Application(master=root)
-app.mainloop()
+
+
+def main():
+    root = tk.Tk()
+    root.resizable(False, False)
+    app = Application(master=root)
+    app.mainloop()
+
+if __name__ == '__main__':
+    main()
