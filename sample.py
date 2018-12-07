@@ -26,7 +26,7 @@ class Application(tk.Frame):
         list_frame = tk.Frame(self, bg='red', bd=5)
         list_frame.grid(row=1, column=1, sticky=tk.N+tk.W+tk.E+tk.S)
 
-        title_label = tk.Label(title_frame, text='TITLE').pack()
+        title_label = tk.Label(title_frame, text='TITLEaaaaaaaaaaaaaaaaaaaaaaaaaa', width=10).pack()
         
         control_button1 = tk.Button(control_frame, text='BUTTON1').pack(fill=tk.X)
         control_button2 = tk.Button(control_frame, text='BUTTON2').pack(fill=tk.X)
