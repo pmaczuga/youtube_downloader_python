@@ -80,11 +80,14 @@ def download_mp4(url, on_start=None, on_progress=None, on_complete=None, on_erro
             on_error(e)
 
 def download_mp3(url, on_start=None, on_progress=None, on_half=None, on_complete=None, on_error=None):
+
+    name = get_different_filename('tmp.mp4')
+    base, ext = os.path.splitext(name)
     
     try:
         download(
             url,
-            name='tmp',
+            name=base,
             quality='poor',
             on_start=on_start,
             on_progress=on_progress)
@@ -92,13 +95,13 @@ def download_mp3(url, on_start=None, on_progress=None, on_half=None, on_complete
         on_half()
 
         convert(
-            'tmp.mp4',
+            name,
             pt.YouTube(url).title + '.mp3',
             format='mp3',
             on_progress=on_progress,
             on_complete=on_complete)
 
-        # os.remove('tmp.mp4')
+        os.remove(name)
 
     except Exception as e:
         print(e)
@@ -107,3 +110,13 @@ def download_mp3(url, on_start=None, on_progress=None, on_half=None, on_complete
 
 def get_title(url):
     return pt.YouTube(url).title
+
+def get_different_filename(filename, iters=8):
+    old_name, extension = os.path.splitext(filename)
+    new_name = old_name
+    for i in range(1, iters + 1):
+        try:
+            open(new_name + extension, 'r')
+        except:
+            return new_name + extension
+        new_name = '{}({})'.format(old_name, i)
